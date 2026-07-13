@@ -1168,7 +1168,20 @@ downloadScorecard.addEventListener("click", downloadScorecardImage);
 restoreSavedAppState();
 
 if ("serviceWorker" in navigator) {
+  let isRefreshing = false;
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (isRefreshing) {
+      return;
+    }
+
+    isRefreshing = true;
+    window.location.reload();
+  });
+
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
+    navigator.serviceWorker.register("./sw.js")
+      .then((registration) => registration.update())
+      .catch(() => {});
   });
 }

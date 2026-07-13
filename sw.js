@@ -1,4 +1,4 @@
-const CACHE_NAME = "club-cricket-scorecard-v2";
+const CACHE_NAME = "club-cricket-scorecard-v4";
 const APP_ASSETS = [
   "./",
   "./index.html",
@@ -36,17 +36,31 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request)
-      .then((cached) => cached || fetch(event.request).then((response) => {
-        if (!response || response.status !== 200) {
-          return response;
-        }
+  const requestUrl = new URL(event.request.url);
+  const isSameOrigin = requestUrl.origin === self.location.origin;
+  const isAppShellRequest = event.request.mode === "navigate"
+    || requestUrl.pathname.endsWith(".html")
+    || requestUrl.pathname.endsWith(".css")
+    || requestUrl.pathname.endsWith(".js")
+    || requestUrl.pathname.endsWith(".webmanifest");
 
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-        return response;
-      }))
-      .catch(() => caches.match("./index.html"))
-  );
+  if (!isSameOrigin || !isAppShellRequest) {
+    return;
+  }
+
+  event.respondWith(fetchFirst(event.request));
 });
+
+function fetchFirst(request) {
+  return fetch(request, { cache: "no-store" })
+    .then((response) => {
+      if (!response || response.status !== 200) {
+        return response;
+      }
+
+      const copy = response.clone();
+      caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+      return response;
+    })
+    .catch(() => caches.match(request).then((cached) => cached || caches.match("./index.html")));
+}
