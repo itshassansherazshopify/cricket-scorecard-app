@@ -39,4 +39,9 @@ for (const file of files) {
 
 copyDirectory(path.join(rootDir, "icons"), path.join(outputDir, "icons"));
 
+const downloadsDir = path.join(rootDir, "downloads");
+if (fs.existsSync(downloadsDir)) {
+  copyDirectory(downloadsDir, path.join(outputDir, "downloads"));
+}
+
 console.log("Prepared Capacitor web assets in www/");
