@@ -94,6 +94,8 @@ const scorecardDetailsBody = document.querySelector("#scorecardDetailsBody");
 const shareScorecard = document.querySelector("#shareScorecard");
 const downloadScorecard = document.querySelector("#downloadScorecard");
 
+const APP_STATE_KEY = "cricketScorecardAppState";
+
 let currentMatch = null;
 let scoringState = null;
 let scoreHistory = [];
@@ -103,6 +105,30 @@ let firstInnings = null;
 let inningsNumber = 1;
 let matchResultSummary = "";
 
+function getActiveScreenName() {
+  return document.querySelector(".screen.is-active")?.id || "homeScreen";
+}
+
+function saveAppState() {
+  localStorage.setItem(APP_STATE_KEY, JSON.stringify({
+    currentMatch,
+    scoringState,
+    scoreHistory,
+    promptQueue,
+    activePrompt,
+    firstInnings,
+    inningsNumber,
+    matchResultSummary,
+    activeScreen: getActiveScreenName()
+  }));
+}
+
+function clearSavedAppState() {
+  localStorage.removeItem(APP_STATE_KEY);
+  localStorage.removeItem("cricketScorecardLive");
+  localStorage.removeItem("cricketScorecardInnings");
+}
+
 function showScreen(screen) {
   homeScreen.classList.remove("is-active");
   createMatchScreen.classList.remove("is-active");
@@ -111,6 +137,7 @@ function showScreen(screen) {
   secondInningsScreen.classList.remove("is-active");
   appShell.classList.toggle("scorecard-layout", screen === scorecardScreen);
   screen.classList.add("is-active");
+  saveAppState();
 }
 
 function updateTossLabels() {
@@ -273,6 +300,7 @@ function updateScorecard() {
   inningsExtraTotal.textContent = scoringState.extras.total;
   inningsExtraBreakdown.textContent = `${scoringState.extras.wide} WD,${scoringState.extras.noBall} N,${scoringState.extras.byes} B`;
   localStorage.setItem("cricketScorecardLive", JSON.stringify(scoringState));
+  saveAppState();
 }
 
 function saveScoreHistory() {
@@ -526,11 +554,13 @@ function openNextPrompt() {
   }
   scoringModal.hidden = false;
   setScoringControlsDisabled(true);
+  saveAppState();
   scoringPromptInput.focus();
 }
 
 function queuePrompt(prompt) {
   promptQueue.push(prompt);
+  saveAppState();
   openNextPrompt();
 }
 
@@ -538,6 +568,7 @@ function closePrompt() {
   activePrompt = null;
   scoringModal.hidden = true;
   setScoringControlsDisabled(false);
+  saveAppState();
   openNextPrompt();
 }
 
@@ -568,6 +599,7 @@ function showFirstInningsBreak() {
   inningsBreakQuestion.textContent = "First innings completed. Do you want to start second innings?";
   inningsBreakModal.hidden = false;
   setScoringControlsDisabled(true);
+  saveAppState();
 }
 
 function finishCurrentInnings() {
@@ -583,6 +615,7 @@ function finishCurrentInnings() {
   setScoringControlsDisabled(true);
   endInnings.textContent = scoringState.runs >= scoringState.target ? "Target reached" : "Match ended";
   showMatchResult();
+  saveAppState();
 }
 
 function showMatchResult() {
@@ -599,6 +632,7 @@ function showMatchResult() {
   matchResultText.textContent = matchResultSummary;
   renderScorecardDetails();
   matchResultModal.hidden = false;
+  saveAppState();
 }
 
 function startScorecard(innings, options = {}) {
@@ -655,6 +689,83 @@ function startScorecard(innings, options = {}) {
   endInnings.textContent = "End innings";
   updateScorecard();
   showScreen(scorecardScreen);
+}
+
+function restoreSavedAppState() {
+  const savedState = localStorage.getItem(APP_STATE_KEY);
+
+  if (!savedState) {
+    return false;
+  }
+
+  try {
+    const saved = JSON.parse(savedState);
+
+    currentMatch = saved.currentMatch || JSON.parse(localStorage.getItem("cricketScorecardMatch") || "null");
+    scoringState = saved.scoringState || null;
+    scoreHistory = Array.isArray(saved.scoreHistory) ? saved.scoreHistory : [];
+    promptQueue = Array.isArray(saved.promptQueue) ? saved.promptQueue : [];
+    if (saved.activePrompt) {
+      promptQueue.unshift(saved.activePrompt);
+    }
+    activePrompt = null;
+    firstInnings = saved.firstInnings || null;
+    inningsNumber = saved.inningsNumber || 1;
+    matchResultSummary = saved.matchResultSummary || "";
+
+    if (currentMatch) {
+      teamOne.value = currentMatch.teamOne || "";
+      teamTwo.value = currentMatch.teamTwo || "";
+      updateTossLabels();
+    }
+
+    scoringModal.hidden = true;
+    inningsBreakModal.hidden = true;
+    matchResultModal.hidden = true;
+    scorecardDetailsModal.hidden = true;
+    clearExtras();
+
+    if (scoringState) {
+      showScreen(scorecardScreen);
+      updateScorecard();
+
+      if (matchResultSummary) {
+        setScoringControlsDisabled(true);
+        endInnings.textContent = scoringState.runs >= scoringState.target ? "Target reached" : "Match ended";
+        matchResultText.textContent = matchResultSummary;
+        renderScorecardDetails();
+        matchResultModal.hidden = false;
+      } else if (saved.activeScreen === "secondInningsScreen" && firstInnings) {
+        prepareSecondInningsSetup();
+        showScreen(secondInningsScreen);
+      } else if (firstInnings && inningsNumber === 1 && isInningsFinished()) {
+        const requiredRunRate = firstInnings.target / Number(currentMatch.totalOvers || 1);
+        inningsBreakTarget.textContent = `${firstInnings.chasingTeam} needs ${firstInnings.target} runs in ${currentMatch.totalOvers} overs`;
+        inningsBreakRate.textContent = `Required run rate is ${formatRunRate(requiredRunRate)}`;
+        inningsBreakQuestion.textContent = "First innings completed. Do you want to start second innings?";
+        inningsBreakModal.hidden = false;
+        setScoringControlsDisabled(true);
+      } else if (promptQueue.length && !isInningsFinished()) {
+        openNextPrompt();
+      } else {
+        setScoringControlsDisabled(isInningsFinished());
+        endInnings.textContent = isInningsFinished() ? "Innings ended" : "End innings";
+      }
+
+      saveAppState();
+      return true;
+    }
+
+    if (saved.activeScreen === "createMatchScreen") {
+      showScreen(createMatchScreen);
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    clearSavedAppState();
+    return false;
+  }
 }
 
 function addRuns(runs) {
@@ -798,6 +909,15 @@ createMatchForm.addEventListener("submit", (event) => {
     return;
   }
 
+  clearSavedAppState();
+  currentMatch = match;
+  scoringState = null;
+  scoreHistory = [];
+  promptQueue = [];
+  activePrompt = null;
+  firstInnings = null;
+  inningsNumber = 1;
+  matchResultSummary = "";
   localStorage.setItem("cricketScorecardMatch", JSON.stringify(match));
   const tossLoser = match.tossWinner === teamOneName ? teamTwoName : teamOneName;
   const battingTeam = match.chooseTo === "Bat" ? match.tossWinner : tossLoser;
@@ -950,6 +1070,7 @@ scoringPromptCancel.addEventListener("click", () => {
     activePrompt = null;
     promptQueue = [];
     scoringModal.hidden = true;
+    saveAppState();
     return;
   }
 
@@ -961,6 +1082,7 @@ startSecondInningsYes.addEventListener("click", () => {
   prepareSecondInningsSetup();
   setScoringControlsDisabled(false);
   showScreen(secondInningsScreen);
+  saveAppState();
   secondInningsForm.secondStrikeBatsman.focus();
 });
 
@@ -968,6 +1090,7 @@ startSecondInningsNo.addEventListener("click", () => {
   inningsBreakModal.hidden = true;
   setScoringControlsDisabled(true);
   endInnings.textContent = "Match ended";
+  saveAppState();
 });
 
 matchResultOk.addEventListener("click", () => {
@@ -996,3 +1119,5 @@ closeScorecardDetails.addEventListener("click", () => {
 shareScorecard.addEventListener("click", shareScorecardText);
 
 downloadScorecard.addEventListener("click", downloadScorecardImage);
+
+restoreSavedAppState();
