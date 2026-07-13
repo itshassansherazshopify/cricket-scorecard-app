@@ -1,0 +1,19 @@
+{
+  "name": "cricket-scorecard-app",
+  "version": "1.0.0",
+  "description": "Installable cricket scorecard app for club matches.",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/prepare-capacitor-web.js",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:open": "npm run android:sync && npx cap open android",
+    "android:apk": "npm run android:sync && cd android && gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  }
+}
