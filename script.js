@@ -981,6 +981,26 @@ scorePickerButtons.forEach((button) => {
   });
 });
 
+wideExtra.addEventListener("click", () => {
+  if (!scoringState || activePrompt || isInningsFinished()) {
+    return;
+  }
+
+  clearExtras();
+  wideExtra.checked = true;
+  addRuns(0);
+});
+
+wicketEvent.addEventListener("click", () => {
+  if (!scoringState || activePrompt || isInningsFinished()) {
+    return;
+  }
+
+  clearExtras();
+  wicketEvent.checked = true;
+  addRuns(0);
+});
+
 swapStrike.addEventListener("click", () => {
   if (!scoringState) {
     return;
