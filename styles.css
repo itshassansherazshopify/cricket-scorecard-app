@@ -1,0 +1,1666 @@
+:root {
+  --green: #0e6d42;
+  --green-dark: #073d27;
+  --lime: #d4ef62;
+  --gold: #f0b93f;
+  --ink: #10221a;
+  --muted: #66766d;
+  --line: rgba(255, 255, 255, 0.34);
+  --field: rgba(255, 255, 255, 0.92);
+  --bg: #eef7f1;
+  --danger: #d6332a;
+  --shadow: 0 18px 40px rgba(7, 61, 39, 0.28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 16% 12%, rgba(240, 185, 63, 0.46), transparent 24%),
+    radial-gradient(circle at 86% 20%, rgba(212, 239, 98, 0.36), transparent 26%),
+    linear-gradient(145deg, #073d27 0%, #0e6d42 48%, #eef7f1 48%, #f8fbf7 100%);
+  color: var(--ink);
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(360px, 100%);
+  min-height: 560px;
+  display: grid;
+  align-items: center;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.74)),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  border-radius: 20px;
+  box-shadow: 0 26px 70px rgba(7, 61, 39, 0.26);
+  padding: 28px;
+  backdrop-filter: blur(16px);
+}
+
+.screen {
+  display: none;
+  width: 100%;
+}
+
+.screen.is-active {
+  display: block;
+}
+
+.screen-home {
+  min-height: 504px;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.screen-home.is-active {
+  display: flex;
+}
+
+.screen-form.is-active {
+  display: block;
+}
+
+.innings-screen.is-active {
+  display: block;
+}
+
+.scorecard-screen.is-active {
+  display: block;
+}
+
+.app-shell.scorecard-layout {
+  width: min(1080px, calc(100vw - 32px));
+  min-height: calc(100vh - 32px);
+  align-items: start;
+  background: #fff;
+  border-radius: 0;
+  padding: 18px;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 16px;
+  border: 3px solid rgba(255, 255, 255, 0.86);
+  border-radius: 50%;
+  background:
+    linear-gradient(135deg, var(--gold), var(--lime) 42%, var(--green) 43%, var(--green-dark));
+  color: #fff;
+  font-size: 25px;
+  font-weight: 800;
+  box-shadow: 0 16px 35px rgba(14, 109, 66, 0.34);
+}
+
+h1,
+h2 {
+  margin: 0;
+  color: var(--green-dark);
+  line-height: 1.15;
+}
+
+h1 {
+  font-size: 32px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #9a6a10;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.home-copy {
+  max-width: 260px;
+  margin: 14px auto 24px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.screen-credit {
+  margin: auto 0 0;
+  padding-top: 22px;
+  color: rgba(7, 61, 39, 0.74);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+.screen-form .screen-credit {
+  margin-top: 22px;
+}
+
+.app-shell:has(.screen-home.is-active) {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(250, 204, 21, 0.18), transparent 28%),
+    radial-gradient(circle at 86% 18%, rgba(34, 197, 94, 0.2), transparent 30%),
+    linear-gradient(150deg, rgba(8, 18, 23, 0.98), rgba(15, 23, 42, 0.95));
+  border-color: rgba(148, 163, 184, 0.22);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.38);
+}
+
+.screen-home .brand-mark {
+  background:
+    linear-gradient(135deg, #facc15 0%, #22c55e 48%, #064e3b 49%, #031712 100%);
+  color: #f8fafc;
+  box-shadow: 0 18px 42px rgba(34, 197, 94, 0.28);
+}
+
+.screen-home h1 {
+  color: #f8fafc;
+}
+
+.screen-home .eyebrow {
+  color: #d9f99d;
+}
+
+.screen-home .home-copy {
+  color: #b7c8d5;
+}
+
+.screen-home .primary-button {
+  background: linear-gradient(135deg, #22c55e, #0f5132);
+  box-shadow: 0 18px 42px rgba(34, 197, 94, 0.24);
+}
+
+.screen-home .primary-button:hover {
+  background: linear-gradient(135deg, #34d399, #0f5132);
+}
+
+.screen-home .screen-credit,
+.scorecard-credit {
+  color: #9ee6bd;
+}
+
+.app-shell:has(.screen-form.is-active),
+.app-shell:has(.innings-screen.is-active) {
+  background:
+    radial-gradient(circle at 14% 4%, rgba(250, 204, 21, 0.14), transparent 28%),
+    radial-gradient(circle at 88% 15%, rgba(34, 197, 94, 0.18), transparent 30%),
+    linear-gradient(150deg, rgba(8, 18, 23, 0.98), rgba(15, 23, 42, 0.95));
+  border-color: rgba(148, 163, 184, 0.22);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.38);
+}
+
+.screen-form h2,
+.innings-screen h2 {
+  color: #f8fafc;
+}
+
+.screen-form .home-button,
+.innings-screen .home-button {
+  border-color: rgba(129, 230, 175, 0.24);
+  background: rgba(12, 24, 31, 0.82);
+  color: #77f2aa;
+}
+
+.screen-form .home-icon,
+.screen-form .home-icon::before,
+.innings-screen .home-icon,
+.innings-screen .home-icon::before {
+  background: #77f2aa;
+}
+
+.screen-form .home-icon::after,
+.innings-screen .home-icon::after {
+  background: rgba(7, 17, 15, 0.9);
+}
+
+.screen-form .field,
+.innings-screen .field,
+.screen-form .choice-group legend,
+.innings-screen .choice-group legend,
+.innings-target-line {
+  color: #d9f99d;
+}
+
+.screen-form input[type="text"],
+.screen-form input[type="number"],
+.innings-screen input[type="text"],
+.innings-screen input[type="number"] {
+  border-color: rgba(125, 211, 252, 0.28);
+  background: rgba(2, 6, 23, 0.58);
+  color: #f8fafc;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.screen-form input::placeholder,
+.innings-screen input::placeholder {
+  color: rgba(226, 232, 240, 0.56);
+}
+
+.screen-form input[type="text"]:focus,
+.screen-form input[type="number"]:focus,
+.innings-screen input[type="text"]:focus,
+.innings-screen input[type="number"]:focus {
+  border-color: rgba(34, 197, 94, 0.8);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.16);
+}
+
+.screen-form .choice-group,
+.innings-screen .choice-group {
+  border-color: rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.58);
+}
+
+.screen-form .choice-group label,
+.innings-screen .choice-group label {
+  color: #dbeafe;
+}
+
+.screen-form input[type="radio"],
+.innings-screen input[type="radio"] {
+  accent-color: #22c55e;
+}
+
+.screen-form .small-field-grid input {
+  border-color: rgba(34, 197, 94, 0.8);
+  color: #f8fafc;
+}
+
+.screen-form .primary-button,
+.innings-screen .primary-button {
+  background: linear-gradient(135deg, #22c55e, #0f5132);
+  box-shadow: 0 18px 42px rgba(34, 197, 94, 0.24);
+}
+
+.screen-form .primary-button:hover,
+.innings-screen .primary-button:hover {
+  background: linear-gradient(135deg, #34d399, #0f5132);
+}
+
+.screen-form .screen-credit,
+.innings-screen .screen-credit {
+  color: #9ee6bd;
+}
+
+.innings-screen .innings-card {
+  border-color: rgba(148, 163, 184, 0.18);
+  background:
+    radial-gradient(circle at 14% 10%, rgba(250, 204, 21, 0.16), transparent 32%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.72), rgba(6, 31, 26, 0.8));
+  color: #f8fafc;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+}
+
+.innings-screen .innings-card.bowling {
+  background:
+    radial-gradient(circle at 86% 8%, rgba(125, 211, 252, 0.16), transparent 32%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.72), rgba(6, 31, 26, 0.8));
+}
+
+.innings-screen .innings-card.bowling strong {
+  color: #f8fafc;
+}
+
+.innings-screen .team-role {
+  color: #d9f99d;
+}
+
+.innings-card {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border: 1px solid rgba(14, 109, 66, 0.12);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(240, 185, 63, 0.34), transparent 28%),
+    radial-gradient(circle at 92% 18%, rgba(212, 239, 98, 0.3), transparent 30%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(231, 248, 236, 0.78));
+  color: var(--green-dark);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82), 0 10px 22px rgba(7, 61, 39, 0.08);
+  text-align: center;
+}
+
+.innings-card.bowling {
+  margin: 0;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(212, 239, 98, 0.34), transparent 28%),
+    radial-gradient(circle at 92% 18%, rgba(240, 185, 63, 0.28), transparent 30%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(231, 248, 236, 0.78));
+  color: var(--green-dark);
+}
+
+.team-role {
+  margin: 0 0 3px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.82;
+}
+
+.innings-card strong {
+  display: block;
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.primary-button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  color: #fff;
+  cursor: pointer;
+  font-weight: 800;
+  padding: 0 28px;
+  box-shadow: var(--shadow);
+}
+
+.primary-button:hover {
+  background: linear-gradient(135deg, #158653, var(--green-dark));
+}
+
+.full-width {
+  width: 100%;
+}
+
+.home-button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(14, 109, 66, 0.24);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--green-dark);
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(7, 61, 39, 0.12);
+}
+
+.home-icon {
+  position: relative;
+  width: 18px;
+  height: 14px;
+  margin-top: 6px;
+  border-radius: 3px;
+  background: var(--green-dark);
+}
+
+.home-icon::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: -6px;
+  width: 14px;
+  height: 14px;
+  background: var(--green-dark);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+.home-icon::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  bottom: 0;
+  width: 4px;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.86);
+  border-radius: 2px 2px 0 0;
+}
+
+.form-topbar {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+form {
+  display: grid;
+  gap: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+  color: var(--green-dark);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.field > span {
+  min-height: 16px;
+}
+
+.field strong,
+.choice-group legend span {
+  color: var(--danger);
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  height: 44px;
+  border: 1px solid rgba(14, 109, 66, 0.2);
+  border-radius: 12px;
+  background: var(--field);
+  color: var(--ink);
+  padding: 10px 12px;
+  outline: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 4px rgba(14, 109, 66, 0.14);
+}
+
+.choice-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 14px;
+  margin: 2px 0 0;
+  padding: 14px;
+  border: 1px solid rgba(14, 109, 66, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.choice-group legend {
+  width: 100%;
+  margin-bottom: 4px;
+  color: var(--green-dark);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.choice-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+
+input[type="radio"] {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--green);
+}
+
+.small-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.small-field-grid input {
+  border-width: 0 0 2px;
+  border-radius: 0;
+  border-color: var(--green);
+  background: transparent;
+  padding-left: 0;
+}
+
+.form-message {
+  min-height: 18px;
+  margin: 0;
+  color: var(--green-dark);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.form-message.error {
+  color: var(--danger);
+}
+
+.scorecard-screen {
+  color: #111;
+  font-family: Arial, sans-serif;
+}
+
+.scorecard-topbar {
+  display: grid;
+  grid-template-columns: 32px 1fr 46px;
+  align-items: center;
+  min-height: 32px;
+  margin-bottom: 6px;
+  color: #09057c;
+}
+
+.scorecard-topbar p {
+  margin: 0;
+  font-size: 14px;
+  text-align: center;
+}
+
+.back-link {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: transparent;
+  color: #09057c;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.score-badge {
+  display: grid;
+  place-items: center;
+  justify-self: end;
+  width: 44px;
+  height: 26px;
+  border-radius: 6px;
+  background: #1c168f;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.score-summary,
+.score-table-card,
+.scoring-controls-card,
+.score-picker-card,
+.innings-extra-card {
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+}
+
+.score-summary {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  min-height: 58px;
+  padding: 7px 10px;
+}
+
+.score-summary p {
+  margin: 0 0 3px;
+  color: #09057c;
+  font-size: 12px;
+}
+
+.score-summary strong {
+  display: block;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.score-summary > div:last-child {
+  text-align: right;
+}
+
+.tab-button {
+  min-width: 110px;
+  min-height: 30px;
+  border: 0;
+  border-radius: 6px;
+  background: #20169b;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.score-table-card {
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.score-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.score-table th,
+.score-table td {
+  padding: 7px 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.score-table th:first-child,
+.score-table td:first-child {
+  width: 34%;
+  text-align: left;
+}
+
+.score-table th {
+  font-weight: 800;
+}
+
+.score-table td:first-child {
+  color: #120999;
+}
+
+.scoring-controls-card {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 10px 8px;
+}
+
+.side-actions {
+  display: grid;
+  gap: 7px;
+}
+
+.side-actions button,
+.extras-grid button {
+  min-height: 29px;
+  border: 0;
+  border-radius: 4px;
+  background: #20169b;
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.extras-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 9px 18px;
+}
+
+.extras-grid label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: #111;
+  font-size: 14px;
+}
+
+.extras-grid input {
+  width: 14px;
+  height: 14px;
+  accent-color: #20169b;
+}
+
+.score-picker-card {
+  margin-top: 8px;
+  padding: 5px 10px 9px;
+}
+
+.score-picker-card p {
+  margin: 0 0 8px;
+  color: #09057c;
+  font-size: 14px;
+  text-align: center;
+}
+
+.score-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px 14px;
+}
+
+.score-picker button {
+  min-height: 27px;
+  border: 1px solid #20169b;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.score-picker button:hover:not(:disabled) {
+  background: #f0efff;
+}
+
+.score-picker button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.innings-extra-card {
+  margin-top: 8px;
+  padding: 11px 10px;
+  font-size: 12px;
+}
+
+@media (min-width: 760px) {
+  .app-shell.scorecard-layout {
+    display: block;
+    width: 100vw;
+    min-height: 100vh;
+    padding: 24px clamp(28px, 7vw, 110px);
+  }
+
+  .scorecard-screen {
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+
+  .score-summary {
+    min-height: 82px;
+    padding: 16px 24px;
+  }
+
+  .score-summary strong {
+    font-size: 30px;
+  }
+
+  .score-table th,
+  .score-table td {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+
+  .scoring-controls-card {
+    grid-template-columns: 170px 1fr;
+    padding: 18px;
+  }
+
+  .side-actions button,
+  .extras-grid button {
+    min-height: 38px;
+    font-size: 14px;
+  }
+
+  .score-picker-card {
+    padding: 12px 18px 18px;
+  }
+
+  .score-picker {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .score-picker button {
+    min-height: 38px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 420px) {
+  body {
+    padding: 0;
+  }
+
+  .app-shell {
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 18px;
+  }
+
+  .screen-form,
+  .innings-screen {
+    min-height: calc(100vh - 36px);
+  }
+
+  .screen-form .form-topbar,
+  .innings-screen .form-topbar {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .screen-form h2,
+  .innings-screen h2 {
+    font-size: 22px;
+  }
+
+  .screen-form form,
+  .innings-screen form {
+    gap: 12px;
+  }
+
+  .screen-form .field,
+  .innings-screen .field {
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  .screen-form input[type="text"],
+  .screen-form input[type="number"],
+  .innings-screen input[type="text"],
+  .innings-screen input[type="number"] {
+    height: 40px;
+    border-radius: 10px;
+    padding: 8px 11px;
+  }
+
+  .screen-form .choice-group {
+    gap: 8px 12px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .screen-form .choice-group legend {
+    margin-bottom: 2px;
+    font-size: 13px;
+  }
+
+  .screen-form .choice-group label {
+    font-size: 12px;
+  }
+
+  .screen-form .small-field-grid {
+    gap: 12px;
+  }
+
+  .screen-form .primary-button,
+  .innings-screen .primary-button {
+    min-height: 42px;
+  }
+
+  .screen-form .screen-credit,
+  .innings-screen .screen-credit {
+    margin-top: 14px;
+    padding-top: 10px;
+  }
+
+  .innings-screen .innings-card {
+    padding: 8px 10px;
+  }
+
+  .innings-screen .innings-card strong {
+    font-size: 16px;
+  }
+
+  .second-innings-screen .innings-target-line {
+    margin: -4px 0 12px;
+    color: #dbeafe;
+  }
+
+  .app-shell.scorecard-layout {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding: 6px 15px 12px;
+  }
+
+  .score-summary {
+    gap: 8px;
+    padding: 7px 8px;
+  }
+
+  .tab-button {
+    min-width: 96px;
+  }
+
+  .score-table th,
+  .score-table td {
+    padding: 6px 3px;
+    font-size: 12px;
+  }
+
+  .score-table th:first-child,
+  .score-table td:first-child {
+    width: 32%;
+    padding-left: 7px;
+  }
+
+  .scoring-controls-card {
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 7px;
+    padding: 8px 7px;
+  }
+
+  .extras-grid {
+    gap: 8px 6px;
+  }
+
+  .extras-grid label {
+    font-size: 12px;
+  }
+
+  .side-actions button,
+  .extras-grid button {
+    font-size: 11px;
+  }
+
+  .score-picker {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 9px 10px;
+  }
+
+  .score-picker button {
+    min-width: 0;
+  }
+}
+
+body:has(.scorecard-layout) {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(44, 212, 142, 0.24), transparent 32%),
+    radial-gradient(circle at 88% 18%, rgba(248, 181, 71, 0.18), transparent 30%),
+    linear-gradient(135deg, #07110f 0%, #0d1f24 48%, #111827 100%);
+}
+
+.app-shell.scorecard-layout {
+  background:
+    linear-gradient(145deg, rgba(9, 22, 27, 0.98), rgba(17, 24, 39, 0.96)),
+    radial-gradient(circle at 20% 10%, rgba(35, 211, 140, 0.18), transparent 30%);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+}
+
+.scorecard-screen {
+  color: #e5edf0;
+}
+
+.scorecard-topbar {
+  color: #c7f7de;
+}
+
+.scorecard-topbar p {
+  color: #b7c8d5;
+  font-weight: 800;
+}
+
+.back-link {
+  border: 1px solid rgba(129, 230, 175, 0.24);
+  border-radius: 10px;
+  background: rgba(12, 24, 31, 0.82);
+  color: #77f2aa;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.score-badge {
+  width: 38px;
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f8b547, #1fbf75 55%, #14532d);
+  color: #07110f;
+  letter-spacing: 0.04em;
+}
+
+.score-summary,
+.score-table-card,
+.this-over-card,
+.scoring-controls-card,
+.score-picker-card,
+.innings-extra-card {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.72);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(14px);
+}
+
+.score-summary {
+  min-height: 68px;
+  background:
+    linear-gradient(135deg, rgba(31, 191, 117, 0.26), rgba(15, 23, 42, 0.86)),
+    radial-gradient(circle at 86% 22%, rgba(248, 181, 71, 0.2), transparent 32%);
+}
+
+.score-summary p,
+.score-picker-card p {
+  color: #8ee6b3;
+}
+
+.score-summary strong {
+  color: #ffffff;
+}
+
+.tab-button,
+.side-actions button,
+.extras-grid button {
+  border: 1px solid rgba(129, 230, 175, 0.24);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #19a86a, #0f5132);
+  color: #f8fffb;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(25, 168, 106, 0.22);
+}
+
+.score-table-card {
+  padding: 4px 0;
+  overflow: hidden;
+}
+
+.score-table th {
+  color: #d9f99d;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.score-table td {
+  border-top: 1px solid rgba(148, 163, 184, 0.11);
+  color: #e5edf0;
+}
+
+.score-table td:first-child {
+  color: #7dd3fc;
+  font-weight: 800;
+}
+
+.this-over-card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 8px;
+  padding: 10px 12px;
+}
+
+.this-over-card span {
+  flex: 0 0 auto;
+  color: #d9f99d;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.this-over-balls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.this-over-balls b {
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  border: 1px solid rgba(125, 211, 252, 0.35);
+  border-radius: 999px;
+  background: rgba(8, 47, 73, 0.74);
+  color: #f8fafc;
+  font-size: 12px;
+}
+
+.extras-grid label {
+  color: #dbeafe;
+}
+
+.extras-grid input {
+  accent-color: #22c55e;
+}
+
+.score-picker button {
+  min-height: 34px;
+  border: 1px solid rgba(125, 211, 252, 0.42);
+  background: rgba(8, 47, 73, 0.54);
+  color: #f8fafc;
+  font-weight: 900;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.score-picker button:hover:not(:disabled) {
+  border-color: rgba(250, 204, 21, 0.66);
+  background: rgba(21, 128, 61, 0.72);
+}
+
+.innings-extra-card {
+  color: #b7c8d5;
+}
+
+.chase-info-card[hidden],
+.match-result-modal[hidden],
+.scorecard-details-modal[hidden] {
+  display: none;
+}
+
+.chase-info-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(250, 204, 21, 0.22);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.72);
+  color: #dbeafe;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
+}
+
+.chase-info-card span {
+  color: #facc15;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.chase-info-card strong {
+  color: #8ee6b3;
+  font-size: 13px;
+  text-align: right;
+}
+
+.scoring-modal[hidden] {
+  display: none;
+}
+
+.scoring-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2, 6, 23, 0.68);
+  backdrop-filter: blur(4px);
+}
+
+.scoring-modal-panel {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(250, 204, 21, 0.26);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 16% 0%, rgba(250, 204, 21, 0.16), transparent 35%),
+    linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(6, 31, 26, 0.98));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.52);
+}
+
+.scoring-modal-panel h3 {
+  margin: 0;
+  color: #ecfccb;
+  font-size: 19px;
+  text-align: center;
+}
+
+.scoring-modal-field {
+  display: grid;
+  gap: 7px;
+  color: #d9f99d;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.retire-options {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.retire-options[hidden] {
+  display: none;
+}
+
+.retire-options legend {
+  margin-bottom: 2px;
+  color: #d9f99d;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.retire-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  color: #f8fafc;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.retire-options input {
+  width: 15px;
+  height: 15px;
+  accent-color: #22c55e;
+}
+
+.scoring-modal-field input {
+  width: 100%;
+  height: 44px;
+  border: 1px solid rgba(125, 211, 252, 0.42);
+  border-radius: 10px;
+  background: rgba(2, 6, 23, 0.78);
+  color: #f8fafc;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.scoring-modal-field input:focus {
+  border-color: rgba(34, 197, 94, 0.8);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.16);
+}
+
+.scoring-modal-message {
+  min-height: 16px;
+  margin: 0;
+  color: #fca5a5;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.scoring-modal-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.scoring-modal-actions button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 10px;
+  color: #f8fffb;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.scoring-modal-actions button:first-child {
+  background: linear-gradient(135deg, #22c55e, #0f5132);
+}
+
+.scoring-modal-actions button:last-child {
+  min-width: 74px;
+  background: rgba(30, 41, 59, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.24);
+}
+
+.scorecard-screen button:disabled,
+.scorecard-screen input:disabled {
+  cursor: not-allowed;
+  opacity: 0.46;
+}
+
+.innings-break-modal[hidden] {
+  display: none;
+}
+
+.innings-break-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 22;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2, 6, 23, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.match-result-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 24;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2, 6, 23, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.scorecard-details-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 26;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(2, 6, 23, 0.74);
+  backdrop-filter: blur(4px);
+}
+
+.scorecard-details-panel {
+  width: min(760px, 100%);
+  max-height: min(88vh, 820px);
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(250, 204, 21, 0.14), transparent 32%),
+    linear-gradient(145deg, #07110f, #111827);
+  color: #e5edf0;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.55);
+}
+
+.scorecard-details-top {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.96), rgba(15, 23, 42, 0.96));
+  color: #f8fafc;
+}
+
+.scorecard-details-top p,
+.scorecard-details-top h3 {
+  margin: 0;
+}
+
+.scorecard-details-top p {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #d9f99d;
+}
+
+.scorecard-details-top h3 {
+  font-size: 16px;
+}
+
+.scorecard-details-top button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.scorecard-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 8px 10px 0;
+  background: rgba(15, 23, 42, 0.86);
+}
+
+.scorecard-tabs button {
+  min-height: 34px;
+  border: 1px solid rgba(129, 230, 175, 0.24);
+  background: rgba(2, 6, 23, 0.5);
+  color: #dbeafe;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.scorecard-tabs .is-selected {
+  background: linear-gradient(135deg, #22c55e, #0f5132);
+  color: #f8fffb;
+}
+
+.scorecard-details-body {
+  overflow: auto;
+  padding: 10px;
+  background: rgba(2, 6, 23, 0.4);
+}
+
+.details-innings-card {
+  margin-bottom: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.78);
+}
+
+.details-innings-card header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 10px;
+  padding: 10px;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(250, 204, 21, 0.14), transparent 28%),
+    linear-gradient(135deg, rgba(6, 78, 59, 0.96), rgba(15, 23, 42, 0.96));
+  color: #f8fafc;
+}
+
+.details-innings-card header small {
+  grid-column: 1 / -1;
+  color: #d9f99d;
+  font-weight: 800;
+}
+
+.details-innings-card table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.details-innings-card th,
+.details-innings-card td {
+  padding: 8px 7px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  font-size: 12px;
+  text-align: center;
+}
+
+.details-innings-card th:first-child,
+.details-innings-card td:first-child {
+  text-align: left;
+}
+
+.details-innings-card th {
+  background: rgba(8, 47, 73, 0.78);
+  color: #d9f99d;
+}
+
+.details-innings-card td:first-child {
+  color: #7dd3fc;
+  font-weight: 800;
+}
+
+.details-innings-card td {
+  color: #e5edf0;
+}
+
+.details-innings-card p {
+  margin: 0;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #b7c8d5;
+}
+
+.scorecard-details-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.86);
+}
+
+.scorecard-details-actions button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #22c55e, #0f5132);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.scorecard-details-panel.is-exporting {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  grid-template-rows: auto auto auto auto !important;
+}
+
+.scorecard-details-panel.is-exporting .scorecard-details-body {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.match-result-panel {
+  width: min(390px, 100%);
+  padding: 22px 18px;
+  border: 1px solid rgba(250, 204, 21, 0.34);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(250, 204, 21, 0.22), transparent 34%),
+    linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(6, 31, 26, 0.98));
+  color: #f8fafc;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.52);
+  text-align: center;
+}
+
+.match-result-panel h3 {
+  margin: 0 0 12px;
+  color: #ecfccb;
+  font-size: 19px;
+}
+
+.match-result-panel > strong {
+  display: block;
+  color: #7dd3fc;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.winner-trophy {
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 70px;
+  margin: 0 auto 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #facc15, #fb923c);
+  color: #fff7ed;
+  font-size: 42px;
+  box-shadow: 0 18px 32px rgba(250, 204, 21, 0.18);
+}
+
+.innings-break-panel {
+  width: min(420px, 100%);
+  padding: 22px 18px;
+  border: 1px solid rgba(250, 204, 21, 0.34);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(250, 204, 21, 0.2), transparent 34%),
+    linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(6, 31, 26, 0.98));
+  color: #f8fafc;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.52);
+  text-align: center;
+}
+
+.innings-break-panel h3 {
+  margin: 0 0 14px;
+  color: #ecfccb;
+  font-size: 19px;
+}
+
+.innings-break-panel p {
+  margin: 8px 0;
+  color: #dbeafe;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.innings-break-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.innings-break-actions button {
+  min-width: 72px;
+  min-height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #22c55e, #0f5132);
+  color: #f8fffb;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.innings-break-actions button:last-child {
+  background: rgba(30, 41, 59, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.24);
+}
+
+.second-innings-screen h2 {
+  text-transform: capitalize;
+}
+
+.innings-target-line {
+  margin: -8px 0 16px;
+  color: var(--green-dark);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.45;
+  text-align: center;
+}
+
+@media (min-width: 760px) {
+  .app-shell.scorecard-layout {
+    padding: 28px clamp(28px, 7vw, 110px);
+  }
+
+  .scorecard-screen.is-active {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.72fr);
+    gap: 14px;
+    max-width: 1120px;
+  }
+
+  .scorecard-topbar,
+  .score-summary,
+  .chase-info-card,
+  .score-table-card,
+  .this-over-card {
+    grid-column: 1;
+  }
+
+  .scoring-controls-card,
+  .score-picker-card,
+  .innings-extra-card {
+    grid-column: 2;
+  }
+
+  .scoring-controls-card {
+    grid-row: 2;
+    align-self: start;
+  }
+
+  .score-picker-card {
+    grid-row: 3;
+  }
+
+  .innings-extra-card {
+    grid-row: 4;
+  }
+
+  .scorecard-credit {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 420px) {
+  .app-shell.scorecard-layout {
+    background:
+      linear-gradient(160deg, rgba(9, 22, 27, 0.99), rgba(17, 24, 39, 0.98)),
+      radial-gradient(circle at 12% 0%, rgba(35, 211, 140, 0.18), transparent 36%);
+  }
+
+  .score-summary,
+  .chase-info-card,
+  .score-table-card,
+  .this-over-card,
+  .scoring-controls-card,
+  .score-picker-card,
+  .innings-extra-card {
+    border-radius: 12px;
+  }
+
+  .this-over-card {
+    padding: 9px 10px;
+  }
+
+  .this-over-balls b {
+    min-width: 23px;
+    height: 23px;
+    font-size: 11px;
+  }
+}

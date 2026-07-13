@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cricket Scorecard App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="screen screen-home is-active" id="homeScreen" aria-labelledby="homeTitle">
+      <div class="brand-mark">CR</div>
+      <p class="eyebrow">Live Match Scorer</p>
+      <h1 id="homeTitle">Club Cricket Scorecard</h1>
+      <p class="home-copy">Create matches, record toss details, and prepare your scoring board.</p>
+      <button class="primary-button" id="openCreateMatch" type="button">Create Match</button>
+      <p class="screen-credit">Created by Hassan Sheraz</p>
+    </section>
+
+    <section class="screen screen-form" id="createMatchScreen" aria-labelledby="createMatchTitle">
+      <div class="form-topbar">
+        <button class="home-button" id="backHome" type="button" aria-label="Back to home">
+          <span class="home-icon" aria-hidden="true"></span>
+        </button>
+        <div>
+          <h2 id="createMatchTitle">Match Setup</h2>
+        </div>
+      </div>
+
+      <form id="createMatchForm">
+        <label class="field">
+          <span>Team Name 1</span>
+          <input type="text" id="teamOne" name="teamOne" placeholder="Team Name 1" required>
+        </label>
+
+        <label class="field">
+          <span>Team Name 2</span>
+          <input type="text" id="teamTwo" name="teamTwo" placeholder="Team Name 2" required>
+        </label>
+
+        <fieldset class="choice-group">
+          <legend><span>*</span> Toss Win :</legend>
+          <label>
+            <input type="radio" name="tossWinner" value="teamOne" required>
+            <span id="teamOneTossLabel">Team Name 1</span>
+          </label>
+          <label>
+            <input type="radio" name="tossWinner" value="teamTwo" required>
+            <span id="teamTwoTossLabel">Team Name 2</span>
+          </label>
+        </fieldset>
+
+        <fieldset class="choice-group">
+          <legend><span>*</span> Choose to :</legend>
+          <label>
+            <input type="radio" name="chooseTo" value="Bat" required>
+            Bat
+          </label>
+          <label>
+            <input type="radio" name="chooseTo" value="Bowl" required>
+            Bowl
+          </label>
+        </fieldset>
+
+        <div class="small-field-grid">
+          <label class="field">
+            <span><strong>*</strong> Total Over(s) :</span>
+            <input type="number" id="totalOvers" name="totalOvers" min="1" value="1" required>
+          </label>
+
+          <label class="field">
+            <span>Total Wickets :</span>
+            <input type="number" id="totalWickets" name="totalWickets" min="1" max="10" value="10">
+          </label>
+        </div>
+
+        <p class="form-message" id="formMessage" role="status" aria-live="polite"></p>
+        <button class="primary-button full-width" type="submit">Create</button>
+      </form>
+      <p class="screen-credit">Created by Hassan Sheraz</p>
+    </section>
+
+    <section class="screen innings-screen" id="inningsScreen" aria-labelledby="inningsTitle">
+      <div class="form-topbar">
+        <button class="home-button" id="backToSetup" type="button" aria-label="Back to match setup">
+          <span class="home-icon" aria-hidden="true"></span>
+        </button>
+        <div>
+          <h2 id="inningsTitle">Start First Innings</h2>
+        </div>
+      </div>
+
+      <div class="innings-card">
+        <p class="team-role">Batting Team</p>
+        <strong id="battingTeamName">Team Name</strong>
+      </div>
+
+      <form id="inningsForm">
+        <label class="field">
+          <span><strong>*</strong> Strike Batsman</span>
+          <input type="text" id="strikeBatsman" name="strikeBatsman" required>
+        </label>
+
+        <label class="field">
+          <span><strong>*</strong> Non-Strike Batsman</span>
+          <input type="text" id="nonStrikeBatsman" name="nonStrikeBatsman" required>
+        </label>
+
+        <div class="innings-card bowling">
+          <p class="team-role">Bowling Team</p>
+          <strong id="bowlingTeamName">Team Name</strong>
+        </div>
+
+        <label class="field">
+          <span><strong>*</strong> Bowler Name</span>
+          <input type="text" id="bowlerName" name="bowlerName" required>
+        </label>
+
+        <p class="form-message" id="inningsMessage" role="status" aria-live="polite"></p>
+        <button class="primary-button full-width" type="submit">Start Scoring</button>
+      </form>
+
+      <p class="screen-credit">Created by Hassan Sheraz</p>
+    </section>
+
+    <section class="screen scorecard-screen" id="scorecardScreen" aria-labelledby="scorecardTitle">
+      <div class="scorecard-topbar">
+        <button class="back-link" id="backToInnings" type="button" aria-label="Back to innings setup">&lt;</button>
+        <p>Total Over : <span id="scoreTotalOvers">1</span></p>
+        <div class="score-badge" aria-hidden="true">CR</div>
+      </div>
+
+      <div class="score-summary">
+        <div>
+          <p id="summaryTeamName">Team</p>
+          <strong id="summaryScore">0 / 0</strong>
+        </div>
+        <button class="tab-button" id="openScorecardDetails" type="button">Scorecard</button>
+        <div>
+          <p>Over</p>
+          <strong id="summaryOvers">0.0</strong>
+        </div>
+      </div>
+
+      <div class="chase-info-card" id="chaseInfoCard" hidden>
+        <span id="chaseTargetText">Target: 0</span>
+        <strong id="chaseNeedText">Need 0 runs from 0 balls</strong>
+      </div>
+
+      <div class="score-table-card">
+        <table class="score-table">
+          <thead>
+            <tr>
+              <th>Batsman</th>
+              <th>Runs</th>
+              <th>Balls</th>
+              <th>4s</th>
+              <th>6s</th>
+              <th>SR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="tableStrikeName">Batsman *</td>
+              <td id="tableStrikeRuns">0</td>
+              <td id="tableStrikeBalls">0</td>
+              <td id="tableStrikeFours">0</td>
+              <td id="tableStrikeSixes">0</td>
+              <td id="tableStrikeRate">0</td>
+            </tr>
+            <tr>
+              <td id="tableNonStrikeName">Batsman</td>
+              <td id="tableNonStrikeRuns">0</td>
+              <td id="tableNonStrikeBalls">0</td>
+              <td id="tableNonStrikeFours">0</td>
+              <td id="tableNonStrikeSixes">0</td>
+              <td id="tableNonStrikeRate">0</td>
+            </tr>
+          </tbody>
+          <thead>
+            <tr>
+              <th>Bowler</th>
+              <th colspan="2">Over</th>
+              <th colspan="2">Wickets</th>
+              <th>Runs</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="tableBowlerName">Bowler</td>
+              <td colspan="2" id="tableBowlerOvers">0.0</td>
+              <td colspan="2" id="tableBowlerWickets">0</td>
+              <td id="tableBowlerRuns">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="this-over-card">
+        <span>This Over :</span>
+        <div class="this-over-balls" id="thisOverBalls">
+          <b>-</b>
+        </div>
+      </div>
+
+      <div class="scoring-controls-card">
+        <div class="side-actions">
+          <button type="button" id="swapStrike">Swap</button>
+          <button type="button" id="retireBatsman">Retire</button>
+          <button type="button" id="endInnings">End innings</button>
+        </div>
+
+        <div class="extras-grid">
+          <label><input type="checkbox" id="wideExtra"> Wide</label>
+          <label><input type="checkbox" id="noBallExtra"> NoBall</label>
+          <label><input type="checkbox" id="byesExtra"> Byes</label>
+          <label><input type="checkbox" id="legByesExtra"> LegByes</label>
+          <label><input type="checkbox" id="wicketEvent"> Wicket</label>
+          <button type="button" id="undoBall">Undo</button>
+        </div>
+      </div>
+
+      <div class="score-picker-card">
+        <p>Select score to update</p>
+        <div class="score-picker">
+          <button type="button" data-run="0">0</button>
+          <button type="button" data-run="1">1</button>
+          <button type="button" data-run="2">2</button>
+          <button type="button" data-run="3">3</button>
+          <button type="button" data-run="4">4</button>
+          <button type="button" data-run="6">6</button>
+        </div>
+      </div>
+
+      <div class="innings-extra-card">
+        InningsExtra : <span id="inningsExtraTotal">0</span> (<span id="inningsExtraBreakdown">0 WD,0 N,0 B</span>)
+      </div>
+
+      <p class="screen-credit scorecard-credit">Created by Hassan Sheraz</p>
+
+      <div class="scoring-modal" id="scoringModal" hidden>
+        <form class="scoring-modal-panel" id="scoringPromptForm">
+          <h3 id="scoringPromptTitle">Change Bowler</h3>
+          <fieldset class="retire-options" id="retireOptions" hidden>
+            <legend>Select Player to Retire</legend>
+            <label>
+              <input type="radio" name="retirePlayer" id="retireStrike" value="striker">
+              <span id="retireStrikeName">Batsman</span>
+            </label>
+            <label>
+              <input type="radio" name="retirePlayer" id="retireNonStrike" value="nonStriker">
+              <span id="retireNonStrikeName">Batsman</span>
+            </label>
+          </fieldset>
+          <label class="scoring-modal-field">
+            <span id="scoringPromptLabel">*Bowler</span>
+            <input type="text" id="scoringPromptInput" autocomplete="off" required>
+          </label>
+          <p class="scoring-modal-message" id="scoringPromptMessage"></p>
+          <div class="scoring-modal-actions">
+            <button type="submit" id="scoringPromptSubmit">Add Bowler</button>
+            <button type="button" id="scoringPromptCancel">No</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="innings-break-modal" id="inningsBreakModal" hidden>
+        <div class="innings-break-panel">
+          <h3 id="inningsBreakTitle">End of First Innings</h3>
+          <p id="inningsBreakTarget">Team needs 0 runs in 0 overs</p>
+          <p id="inningsBreakRate">Required run rate is 0</p>
+          <p id="inningsBreakQuestion">Start second innings?</p>
+          <div class="innings-break-actions">
+            <button type="button" id="startSecondInningsYes">Yes</button>
+            <button type="button" id="startSecondInningsNo">No</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="match-result-modal" id="matchResultModal" hidden>
+        <div class="match-result-panel">
+          <h3>Match Result</h3>
+          <strong id="matchResultText">Team Win</strong>
+          <div class="winner-trophy" aria-hidden="true">★</div>
+          <div class="innings-break-actions">
+            <button type="button" id="matchResultOk">Ok</button>
+            <button type="button" id="matchResultScorecard">Scorecard</button>
+            <button type="button" id="matchResultShare">Share</button>
+            <button type="button" id="matchResultDownload">Download</button>
+            <button type="button" id="matchResultCancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="scorecard-details-modal" id="scorecardDetailsModal" hidden>
+        <div class="scorecard-details-panel">
+          <div class="scorecard-details-top">
+            <div>
+              <p>Match Scorecard</p>
+              <h3 id="scorecardDetailsTitle">Scorecard</h3>
+            </div>
+            <button type="button" id="closeScorecardDetails" aria-label="Close scorecard">×</button>
+          </div>
+          <div class="scorecard-tabs">
+            <button type="button" class="is-selected">Scorecard</button>
+            <button type="button">Stats</button>
+          </div>
+          <div class="scorecard-details-body" id="scorecardDetailsBody"></div>
+          <div class="scorecard-details-actions">
+            <button type="button" id="shareScorecard">Share</button>
+            <button type="button" id="downloadScorecard">Download</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen innings-screen second-innings-screen" id="secondInningsScreen" aria-labelledby="secondInningsTitle">
+      <div class="form-topbar">
+        <button class="home-button" id="backToFirstScorecard" type="button" aria-label="Back to scorecard">
+          <span class="home-icon" aria-hidden="true"></span>
+        </button>
+        <div>
+          <h2 id="secondInningsTitle">Start Second Innings</h2>
+        </div>
+      </div>
+
+      <p class="innings-target-line" id="secondInningsTarget">Team needs 0 runs in 0 overs</p>
+
+      <div class="innings-card">
+        <p class="team-role">Batting Team</p>
+        <strong id="secondBattingTeamName">Team Name</strong>
+      </div>
+
+      <form id="secondInningsForm">
+        <label class="field">
+          <span><strong>*</strong> Strike Batsman</span>
+          <input type="text" id="secondStrikeBatsman" name="secondStrikeBatsman" required>
+        </label>
+
+        <label class="field">
+          <span><strong>*</strong> Non-Strike Batsman</span>
+          <input type="text" id="secondNonStrikeBatsman" name="secondNonStrikeBatsman" required>
+        </label>
+
+        <div class="innings-card bowling">
+          <p class="team-role">Bowling Team</p>
+          <strong id="secondBowlingTeamName">Team Name</strong>
+        </div>
+
+        <label class="field">
+          <span><strong>*</strong> Bowler Name</span>
+          <input type="text" id="secondBowlerName" name="secondBowlerName" required>
+        </label>
+
+        <p class="form-message" id="secondInningsMessage" role="status" aria-live="polite"></p>
+        <button class="primary-button full-width" type="submit">Start</button>
+      </form>
+
+      <p class="screen-credit">Created by Hassan Sheraz</p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
