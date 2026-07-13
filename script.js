@@ -1121,3 +1121,9 @@ shareScorecard.addEventListener("click", shareScorecardText);
 downloadScorecard.addEventListener("click", downloadScorecardImage);
 
 restoreSavedAppState();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  });
+}
