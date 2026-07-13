@@ -1,18 +1,20 @@
-const CACHE_NAME = "club-cricket-scorecard-v1";
+const CACHE_NAME = "club-cricket-scorecard-v2";
 const APP_ASSETS = [
-  "/",
-  "/index.html",
-  "/styles.css",
-  "/script.js",
-  "/manifest.webmanifest",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png"
+  "./",
+  "./index.html",
+  "./styles.css",
+  "./script.js",
+  "./manifest.webmanifest",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_ASSETS))
+      .then((cache) => Promise.all(
+        APP_ASSETS.map((asset) => cache.add(asset).catch(() => null))
+      ))
       .then(() => self.skipWaiting())
   );
 });
@@ -37,10 +39,14 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request)
       .then((cached) => cached || fetch(event.request).then((response) => {
+        if (!response || response.status !== 200) {
+          return response;
+        }
+
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         return response;
       }))
-      .catch(() => caches.match("/index.html"))
+      .catch(() => caches.match("./index.html"))
   );
 });
