@@ -81,11 +81,10 @@ const startSecondInningsYes = document.querySelector("#startSecondInningsYes");
 const startSecondInningsNo = document.querySelector("#startSecondInningsNo");
 const matchResultModal = document.querySelector("#matchResultModal");
 const matchResultText = document.querySelector("#matchResultText");
-const matchResultOk = document.querySelector("#matchResultOk");
+const matchResultNewMatch = document.querySelector("#matchResultNewMatch");
 const matchResultScorecard = document.querySelector("#matchResultScorecard");
 const matchResultShare = document.querySelector("#matchResultShare");
 const matchResultDownload = document.querySelector("#matchResultDownload");
-const matchResultCancel = document.querySelector("#matchResultCancel");
 const openScorecardDetails = document.querySelector("#openScorecardDetails");
 const scorecardDetailsModal = document.querySelector("#scorecardDetailsModal");
 const closeScorecardDetails = document.querySelector("#closeScorecardDetails");
@@ -127,6 +126,34 @@ function clearSavedAppState() {
   localStorage.removeItem(APP_STATE_KEY);
   localStorage.removeItem("cricketScorecardLive");
   localStorage.removeItem("cricketScorecardInnings");
+  localStorage.removeItem("cricketScorecardMatch");
+}
+
+function resetForNewMatch() {
+  clearSavedAppState();
+  currentMatch = null;
+  scoringState = null;
+  scoreHistory = [];
+  promptQueue = [];
+  activePrompt = null;
+  firstInnings = null;
+  inningsNumber = 1;
+  matchResultSummary = "";
+  createMatchForm.reset();
+  inningsForm.reset();
+  secondInningsForm.reset();
+  updateTossLabels();
+  clearExtras();
+  scoringModal.hidden = true;
+  inningsBreakModal.hidden = true;
+  matchResultModal.hidden = true;
+  scorecardDetailsModal.hidden = true;
+  formMessage.textContent = "";
+  formMessage.className = "form-message";
+  inningsMessage.textContent = "";
+  inningsMessage.className = "form-message";
+  secondInningsMessage.textContent = "";
+  secondInningsMessage.className = "form-message";
 }
 
 function showScreen(screen) {
@@ -1113,8 +1140,10 @@ startSecondInningsNo.addEventListener("click", () => {
   saveAppState();
 });
 
-matchResultOk.addEventListener("click", () => {
-  matchResultModal.hidden = true;
+matchResultNewMatch.addEventListener("click", () => {
+  resetForNewMatch();
+  showScreen(createMatchScreen);
+  teamOne.focus();
 });
 
 matchResultScorecard.addEventListener("click", () => {
@@ -1125,10 +1154,6 @@ matchResultScorecard.addEventListener("click", () => {
 matchResultShare.addEventListener("click", shareScorecardText);
 
 matchResultDownload.addEventListener("click", downloadScorecardImage);
-
-matchResultCancel.addEventListener("click", () => {
-  matchResultModal.hidden = true;
-});
 
 openScorecardDetails.addEventListener("click", openScorecardModal);
 
