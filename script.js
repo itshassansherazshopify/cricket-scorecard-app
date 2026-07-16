@@ -52,6 +52,7 @@ const wideExtra = document.querySelector("#wideExtra");
 const noBallExtra = document.querySelector("#noBallExtra");
 const byesExtra = document.querySelector("#byesExtra");
 const legByesExtra = document.querySelector("#legByesExtra");
+const freeHitExtra = document.querySelector("#freeHitExtra");
 const wicketEvent = document.querySelector("#wicketEvent");
 const inningsExtraTotal = document.querySelector("#inningsExtraTotal");
 const inningsExtraBreakdown = document.querySelector("#inningsExtraBreakdown");
@@ -240,7 +241,7 @@ function setScoringControlsDisabled(isDisabled) {
     button.disabled = isDisabled;
   });
 
-  [swapStrike, retireBatsman, endInnings, undoBall, wideExtra, noBallExtra, byesExtra, legByesExtra, wicketEvent].forEach((control) => {
+  [swapStrike, retireBatsman, endInnings, undoBall, wideExtra, noBallExtra, byesExtra, legByesExtra, freeHitExtra, wicketEvent].forEach((control) => {
     control.disabled = isDisabled;
   });
 }
@@ -266,10 +267,13 @@ function clearExtras() {
   noBallExtra.checked = false;
   byesExtra.checked = false;
   legByesExtra.checked = false;
+  freeHitExtra.checked = false;
+  freeHitExtra.classList.remove("is-active");
+  freeHitExtra.setAttribute("aria-pressed", "false");
   wicketEvent.checked = false;
 }
 
-function getBallLabel(runs, isWide, isNoBall, isByes, isLegByes, isWicket) {
+function getBallLabel(runs, isWide, isNoBall, isByes, isLegByes, isFreeHit, isWicket) {
   if (isWicket) {
     return runs > 0 ? `W+${runs}` : "W";
   }
@@ -290,13 +294,17 @@ function getBallLabel(runs, isWide, isNoBall, isByes, isLegByes, isWicket) {
     return `${runs}LB`;
   }
 
+  if (isFreeHit) {
+    return runs > 0 ? `FH+${runs}` : "FH";
+  }
+
   return String(runs);
 }
 
 function getOverBallClass(ball) {
   const label = String(ball).toLowerCase();
 
-  if (label === "free hit") {
+  if (label === "free hit" || label.startsWith("fh")) {
     return "free-hit";
   }
 
@@ -966,11 +974,12 @@ function addRuns(runs) {
   const isNoBall = noBallExtra.checked;
   const isByes = byesExtra.checked;
   const isLegByes = legByesExtra.checked;
+  const isFreeHit = freeHitExtra.checked;
   const isWicket = wicketEvent.checked;
   const isLegalBall = !isWide && !isNoBall;
   const isBatRuns = !isByes && !isLegByes;
   const player = getPlayer(scoringState.striker);
-  const ballLabel = getBallLabel(runs, isWide, isNoBall, isByes, isLegByes, isWicket);
+  const ballLabel = getBallLabel(runs, isWide, isNoBall, isByes, isLegByes, isFreeHit, isWicket);
   let overEnded = false;
   let extraRuns = 0;
 
@@ -999,10 +1008,6 @@ function addRuns(runs) {
   }
 
   scoringState.thisOver.push(ballLabel);
-
-  if (isNoBall) {
-    scoringState.thisOver.push("Free Hit");
-  }
 
   if (isBatRuns) {
     player.runs += runs;
@@ -1199,6 +1204,18 @@ wideExtra.addEventListener("click", () => {
   clearExtras();
   wideExtra.checked = true;
   addRuns(0);
+});
+
+freeHitExtra.addEventListener("click", () => {
+  if (!scoringState || activePrompt || isInningsFinished()) {
+    return;
+  }
+
+  const shouldActivate = !freeHitExtra.checked;
+  clearExtras();
+  freeHitExtra.checked = shouldActivate;
+  freeHitExtra.classList.toggle("is-active", shouldActivate);
+  freeHitExtra.setAttribute("aria-pressed", String(shouldActivate));
 });
 
 wicketEvent.addEventListener("click", () => {
