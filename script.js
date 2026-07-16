@@ -460,14 +460,14 @@ function renderMatchHistory() {
     return;
   }
 
-  matchHistoryList.innerHTML = history.map((match) => `
+  matchHistoryList.innerHTML = history.map((match, index) => `
     <article class="history-card">
       <div>
         <strong>${escapeHtml(match.teamOne || "Team 1")} vs ${escapeHtml(match.teamTwo || "Team 2")}</strong>
         <span>${escapeHtml(formatHistoryDate(match.createdAt))}</span>
       </div>
       <p>${escapeHtml(match.result)}</p>
-      <button type="button" data-history-id="${encodeURIComponent(match.id)}">Scorecard</button>
+      <button type="button" data-history-index="${index}">Scorecard</button>
     </article>
   `).join("");
 }
@@ -1007,17 +1007,21 @@ openCreateMatch.addEventListener("click", () => {
 });
 
 matchHistoryList?.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-history-id]");
+  const button = event.target.closest("[data-history-index]");
 
   if (!button) {
     return;
   }
 
-  const historyId = decodeURIComponent(button.dataset.historyId || "");
-  const historyMatch = getMatchHistory().find((match) => match.id === historyId);
+  const historyIndex = Number(button.dataset.historyIndex);
+  const historyMatch = getMatchHistory()[historyIndex];
 
-  if (historyMatch) {
+  if (historyMatch?.innings?.length) {
     openScorecardModal(historyMatch);
+  } else {
+    scorecardDetailsTitle.textContent = "Scorecard unavailable";
+    scorecardDetailsBody.innerHTML = "<p>This completed match was saved before scorecard details were available.</p>";
+    scorecardDetailsModal.hidden = false;
   }
 });
 
