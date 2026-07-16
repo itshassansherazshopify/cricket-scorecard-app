@@ -192,6 +192,81 @@ h2 {
   background: linear-gradient(135deg, #6ee7b7, #22c55e 48%, #0f5132);
 }
 
+.match-history {
+  width: 100%;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.match-history h2 {
+  margin: 0 0 10px;
+  color: #d9f99d;
+  font-size: 15px;
+  text-align: center;
+}
+
+.match-history-list {
+  display: grid;
+  gap: 10px;
+}
+
+.empty-history {
+  margin: 0;
+  padding: 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.28);
+  border-radius: 12px;
+  color: #b7c8d5;
+  font-size: 12px;
+  text-align: center;
+}
+
+.history-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 10px;
+  align-items: center;
+  padding: 11px 12px;
+  border: 1px solid rgba(129, 230, 175, 0.22);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.62);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
+}
+
+.history-card strong {
+  display: block;
+  color: #f8fafc;
+  font-size: 13px;
+}
+
+.history-card span {
+  display: block;
+  margin-top: 3px;
+  color: #b7c8d5;
+  font-size: 11px;
+}
+
+.history-card p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #7dd3fc;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.history-card button {
+  grid-row: 1;
+  grid-column: 2;
+  min-height: 32px;
+  border: 1px solid rgba(187, 247, 208, 0.3);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #34d399, #0f5132);
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 0 12px;
+}
+
 .screen-home .screen-credit,
 .scorecard-credit {
   color: #9ee6bd;
@@ -847,6 +922,24 @@ input[type="radio"] {
   .screen-home .primary-button {
     min-height: 48px;
     font-size: 14px;
+  }
+
+  .match-history {
+    margin-top: 14px;
+  }
+
+  .match-history h2 {
+    font-size: 14px;
+  }
+
+  .history-card {
+    padding: 9px 10px;
+  }
+
+  .history-card strong,
+  .history-card p,
+  .history-card button {
+    font-size: 11px;
   }
 
   .screen-home .screen-credit {

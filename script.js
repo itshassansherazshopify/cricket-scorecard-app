@@ -92,8 +92,10 @@ const scorecardDetailsTitle = document.querySelector("#scorecardDetailsTitle");
 const scorecardDetailsBody = document.querySelector("#scorecardDetailsBody");
 const shareScorecard = document.querySelector("#shareScorecard");
 const downloadScorecard = document.querySelector("#downloadScorecard");
+const matchHistoryList = document.querySelector("#matchHistoryList");
 
 const APP_STATE_KEY = "cricketScorecardAppState";
+const MATCH_HISTORY_KEY = "cricketScorecardCompletedMatches";
 
 let currentMatch = null;
 let scoringState = null;
@@ -164,6 +166,9 @@ function showScreen(screen) {
   secondInningsScreen.classList.remove("is-active");
   appShell.classList.toggle("scorecard-layout", screen === scorecardScreen);
   screen.classList.add("is-active");
+  if (screen === homeScreen) {
+    renderMatchHistory();
+  }
   saveAppState();
 }
 
@@ -378,6 +383,94 @@ function getCompletedInnings() {
   return innings;
 }
 
+function getMatchHistory() {
+  try {
+    const matches = JSON.parse(localStorage.getItem(MATCH_HISTORY_KEY) || "[]");
+    return Array.isArray(matches) ? matches : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveMatchHistory(matches) {
+  localStorage.setItem(MATCH_HISTORY_KEY, JSON.stringify(matches.slice(0, 20)));
+}
+
+function formatHistoryDate(timestamp) {
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  }).format(new Date(timestamp));
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function saveCompletedMatchToHistory() {
+  if (!matchResultSummary || !currentMatch || !scoringState) {
+    return;
+  }
+
+  const innings = getCompletedInnings();
+  const id = [
+    currentMatch.teamOne,
+    currentMatch.teamTwo,
+    matchResultSummary,
+    innings.map((item) => `${item.battingTeam}-${item.runs}-${item.wickets}-${item.legalBalls}`).join("|")
+  ].join("::");
+
+  const history = getMatchHistory();
+
+  if (history.some((match) => match.id === id)) {
+    return;
+  }
+
+  history.unshift({
+    id,
+    createdAt: Date.now(),
+    teamOne: currentMatch.teamOne,
+    teamTwo: currentMatch.teamTwo,
+    result: matchResultSummary,
+    innings
+  });
+
+  saveMatchHistory(history);
+  renderMatchHistory();
+}
+
+function renderMatchHistory() {
+  if (!matchHistoryList) {
+    return;
+  }
+
+  const history = getMatchHistory();
+
+  if (!history.length) {
+    matchHistoryList.innerHTML = '<p class="empty-history">No completed matches yet.</p>';
+    return;
+  }
+
+  matchHistoryList.innerHTML = history.map((match) => `
+    <article class="history-card">
+      <div>
+        <strong>${escapeHtml(match.teamOne || "Team 1")} vs ${escapeHtml(match.teamTwo || "Team 2")}</strong>
+        <span>${escapeHtml(formatHistoryDate(match.createdAt))}</span>
+      </div>
+      <p>${escapeHtml(match.result)}</p>
+      <button type="button" data-history-id="${encodeURIComponent(match.id)}">Scorecard</button>
+    </article>
+  `).join("");
+}
+
 function buildScorecardText() {
   const lines = ["Club Cricket Scorecard"];
 
@@ -403,8 +496,10 @@ function buildScorecardText() {
   return lines.join("\n");
 }
 
-function renderScorecardDetails() {
-  const inningsCards = getCompletedInnings().map((innings) => {
+function renderScorecardDetails(historyMatch = null) {
+  const inningsSource = historyMatch?.innings || getCompletedInnings();
+  const detailsTitle = historyMatch?.result || matchResultSummary || "Live Scorecard";
+  const inningsCards = inningsSource.map((innings) => {
     const runRate = innings.legalBalls ? ((innings.runs / innings.legalBalls) * 6).toFixed(2) : "0.00";
     const batterRows = innings.players.map((player) => `
       <tr>
@@ -446,12 +541,12 @@ function renderScorecardDetails() {
     `;
   }).join("");
 
-  scorecardDetailsTitle.textContent = matchResultSummary || "Live Scorecard";
+  scorecardDetailsTitle.textContent = detailsTitle;
   scorecardDetailsBody.innerHTML = inningsCards || "<p>No scorecard yet.</p>";
 }
 
-function openScorecardModal() {
-  renderScorecardDetails();
+function openScorecardModal(historyMatch = null) {
+  renderScorecardDetails(historyMatch);
   scorecardDetailsModal.hidden = false;
 }
 
@@ -659,6 +754,7 @@ function showMatchResult() {
   matchResultText.textContent = matchResultSummary;
   renderScorecardDetails();
   matchResultModal.hidden = false;
+  saveCompletedMatchToHistory();
   saveAppState();
 }
 
@@ -882,6 +978,21 @@ function addRuns(runs) {
 openCreateMatch.addEventListener("click", () => {
   showScreen(createMatchScreen);
   teamOne.focus();
+});
+
+matchHistoryList?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-history-id]");
+
+  if (!button) {
+    return;
+  }
+
+  const historyId = decodeURIComponent(button.dataset.historyId || "");
+  const historyMatch = getMatchHistory().find((match) => match.id === historyId);
+
+  if (historyMatch) {
+    openScorecardModal(historyMatch);
+  }
 });
 
 backHome.addEventListener("click", () => {
@@ -1165,6 +1276,7 @@ shareScorecard.addEventListener("click", shareScorecardText);
 
 downloadScorecard.addEventListener("click", downloadScorecardImage);
 
+renderMatchHistory();
 restoreSavedAppState();
 
 if ("serviceWorker" in navigator) {
