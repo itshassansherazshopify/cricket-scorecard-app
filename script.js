@@ -262,14 +262,18 @@ function getUniquePlayerName(name) {
   return nextName;
 }
 
+function setFreeHitActive(isActive) {
+  freeHitExtra.dataset.active = String(isActive);
+  freeHitExtra.classList.toggle("is-active", isActive);
+  freeHitExtra.setAttribute("aria-pressed", String(isActive));
+}
+
 function clearExtras() {
   wideExtra.checked = false;
   noBallExtra.checked = false;
   byesExtra.checked = false;
   legByesExtra.checked = false;
-  freeHitExtra.checked = false;
-  freeHitExtra.classList.remove("is-active");
-  freeHitExtra.setAttribute("aria-pressed", "false");
+  setFreeHitActive(false);
   wicketEvent.checked = false;
 }
 
@@ -1003,9 +1007,10 @@ function addRuns(runs) {
   const isNoBall = noBallExtra.checked;
   const isByes = byesExtra.checked;
   const isLegByes = legByesExtra.checked;
-  const isFreeHit = freeHitExtra.checked;
+  const isFreeHit = freeHitExtra.dataset.active === "true";
   const isWicket = wicketEvent.checked;
-  const isLegalBall = !isWide && !isNoBall;
+  const isExtraDelivery = isWide || isNoBall;
+  const isLegalBall = !isExtraDelivery;
   const isBatRuns = !isByes && !isLegByes;
   const player = getPlayer(scoringState.striker);
   const ballLabel = getBallLabel(runs, isWide, isNoBall, isByes, isLegByes, isFreeHit, isWicket);
@@ -1240,11 +1245,9 @@ freeHitExtra.addEventListener("click", () => {
     return;
   }
 
-  const shouldActivate = !freeHitExtra.checked;
+  const shouldActivate = freeHitExtra.dataset.active !== "true";
   clearExtras();
-  freeHitExtra.checked = shouldActivate;
-  freeHitExtra.classList.toggle("is-active", shouldActivate);
-  freeHitExtra.setAttribute("aria-pressed", String(shouldActivate));
+  setFreeHitActive(shouldActivate);
 });
 
 wicketEvent.addEventListener("click", () => {
