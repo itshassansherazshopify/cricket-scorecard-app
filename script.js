@@ -105,6 +105,7 @@ let activePrompt = null;
 let firstInnings = null;
 let inningsNumber = 1;
 let matchResultSummary = "";
+let activeScorecardMatch = null;
 
 function getActiveScreenName() {
   return document.querySelector(".screen.is-active")?.id || "homeScreen";
@@ -471,10 +472,11 @@ function renderMatchHistory() {
   `).join("");
 }
 
-function buildScorecardText() {
+function buildScorecardText(historyMatch = activeScorecardMatch) {
   const lines = ["Club Cricket Scorecard"];
+  const inningsSource = historyMatch?.innings || getCompletedInnings();
 
-  getCompletedInnings().forEach((innings) => {
+  inningsSource.forEach((innings) => {
     lines.push("");
     lines.push(`${innings.battingTeam}: ${innings.runs}/${innings.wickets} (${formatOvers(innings.legalBalls)} ov)`);
     innings.players.forEach((player) => {
@@ -486,9 +488,11 @@ function buildScorecardText() {
     });
   });
 
-  if (matchResultSummary) {
+  const resultText = historyMatch?.result || matchResultSummary;
+
+  if (resultText) {
     lines.push("");
-    lines.push(matchResultSummary);
+    lines.push(resultText);
   }
 
   lines.push("");
@@ -497,6 +501,7 @@ function buildScorecardText() {
 }
 
 function renderScorecardDetails(historyMatch = null) {
+  activeScorecardMatch = historyMatch;
   const inningsSource = historyMatch?.innings || getCompletedInnings();
   const detailsTitle = historyMatch?.result || matchResultSummary || "Live Scorecard";
   const inningsCards = inningsSource.map((innings) => {
@@ -555,8 +560,11 @@ function shareScorecardText() {
   window.open(`https://wa.me/?text=${text}`, "_blank");
 }
 
-async function downloadScorecardImage() {
-  openScorecardModal();
+async function downloadScorecardPdf() {
+  if (scorecardDetailsModal.hidden) {
+    openScorecardModal(activeScorecardMatch);
+  }
+
   const panel = document.querySelector(".scorecard-details-panel");
   const detailsBody = document.querySelector(".scorecard-details-body");
   const closeButton = panel?.querySelector(".scorecard-details-top button");
@@ -581,6 +589,7 @@ async function downloadScorecardImage() {
 
   try {
     const htmlToImage = await import("https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/+esm");
+    const { jsPDF } = await import("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/+esm");
     const panelWidth = Math.ceil(panel.getBoundingClientRect().width || panel.scrollWidth);
 
     panel.classList.add("is-exporting");
@@ -588,7 +597,7 @@ async function downloadScorecardImage() {
     panel.style.height = "auto";
     panel.style.maxHeight = "none";
     panel.style.overflow = "visible";
-    panel.style.gridTemplateRows = "auto auto auto auto";
+    panel.style.gridTemplateRows = "auto auto auto";
     detailsBody.style.height = "auto";
     detailsBody.style.maxHeight = "none";
     detailsBody.style.overflow = "visible";
@@ -614,10 +623,27 @@ async function downloadScorecardImage() {
         overflow: "visible"
       }
     });
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = "cricket-scorecard.png";
-    link.click();
+
+    const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 24;
+    const imageWidth = pageWidth - margin * 2;
+    const imageHeight = exportHeight * (imageWidth / exportWidth);
+    const pageContentHeight = pageHeight - margin * 2;
+
+    let position = margin;
+    let remainingHeight = imageHeight;
+    pdf.addImage(dataUrl, "PNG", margin, position, imageWidth, imageHeight);
+
+    while (remainingHeight > pageContentHeight) {
+      remainingHeight -= pageContentHeight;
+      position -= pageContentHeight;
+      pdf.addPage();
+      pdf.addImage(dataUrl, "PNG", margin, position, imageWidth, imageHeight);
+    }
+
+    pdf.save("cricket-scorecard.pdf");
   } catch (error) {
     const text = encodeURIComponent(buildScorecardText());
     window.open(`data:text/plain;charset=utf-8,${text}`, "_blank");
@@ -1264,9 +1290,11 @@ matchResultScorecard.addEventListener("click", () => {
 
 matchResultShare.addEventListener("click", shareScorecardText);
 
-matchResultDownload.addEventListener("click", downloadScorecardImage);
+matchResultDownload.addEventListener("click", downloadScorecardPdf);
 
-openScorecardDetails.addEventListener("click", openScorecardModal);
+openScorecardDetails.addEventListener("click", () => {
+  openScorecardModal();
+});
 
 closeScorecardDetails.addEventListener("click", () => {
   scorecardDetailsModal.hidden = true;
@@ -1274,7 +1302,7 @@ closeScorecardDetails.addEventListener("click", () => {
 
 shareScorecard.addEventListener("click", shareScorecardText);
 
-downloadScorecard.addEventListener("click", downloadScorecardImage);
+downloadScorecard.addEventListener("click", downloadScorecardPdf);
 
 renderMatchHistory();
 restoreSavedAppState();
