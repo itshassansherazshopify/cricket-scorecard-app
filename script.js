@@ -598,6 +598,35 @@ function shareScorecardText() {
   window.open(`https://wa.me/?text=${text}`, "_blank");
 }
 
+async function savePdfBlob(pdf, fileName) {
+  const blob = pdf.output("blob");
+  const file = new File([blob], fileName, { type: "application/pdf" });
+
+  if (navigator.canShare?.({ files: [file] })) {
+    await navigator.share({
+      files: [file],
+      title: "Cricket Scorecard",
+      text: "Cricket scorecard PDF"
+    });
+    return;
+  }
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.rel = "noopener";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    window.open(url, "_blank", "noopener");
+  }
+
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
 async function downloadScorecardPdf() {
   if (scorecardDetailsModal.hidden) {
     openScorecardModal(activeScorecardMatch);
@@ -681,7 +710,7 @@ async function downloadScorecardPdf() {
       pdf.addImage(dataUrl, "PNG", margin, position, imageWidth, imageHeight);
     }
 
-    pdf.save("cricket-scorecard.pdf");
+    await savePdfBlob(pdf, `cricket-scorecard-${Date.now()}.pdf`);
   } catch (error) {
     const text = encodeURIComponent(buildScorecardText());
     window.open(`data:text/plain;charset=utf-8,${text}`, "_blank");
