@@ -1,4 +1,4 @@
-const CACHE_NAME = "club-cricket-scorecard-v7";
+const CACHE_NAME = "club-cricket-scorecard-v8";
 const APP_ASSETS = [
   "./",
   "./index.html",

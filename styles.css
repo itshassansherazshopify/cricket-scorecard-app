@@ -889,11 +889,11 @@ input[type="radio"] {
     min-height: 100dvh;
     border-radius: 0;
     box-shadow: none;
-    padding: 14px 16px;
+    padding: max(24px, env(safe-area-inset-top)) 16px max(14px, env(safe-area-inset-bottom));
   }
 
   .screen-home {
-    min-height: calc(100dvh - 28px);
+    min-height: calc(100dvh - max(24px, env(safe-area-inset-top)) - max(14px, env(safe-area-inset-bottom)));
     justify-content: center;
   }
 
@@ -949,7 +949,7 @@ input[type="radio"] {
 
   .screen-form,
   .innings-screen {
-    min-height: calc(100dvh - 28px);
+    min-height: calc(100dvh - max(24px, env(safe-area-inset-top)) - max(14px, env(safe-area-inset-bottom)));
   }
 
   .screen-form .form-topbar,
@@ -1029,9 +1029,9 @@ input[type="radio"] {
 
   .app-shell.scorecard-layout {
     width: 100%;
-    min-height: 100vh;
+    min-height: 100dvh;
     overflow-x: hidden;
-    padding: 6px 15px 12px;
+    padding: max(26px, env(safe-area-inset-top)) 15px max(12px, env(safe-area-inset-bottom));
   }
 
   .score-summary {
@@ -1806,7 +1806,7 @@ body:has(.scorecard-layout) {
   .app-shell.scorecard-layout {
     width: 100%;
     min-height: 100dvh;
-    padding: 5px 10px 10px;
+    padding: max(26px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
     overflow-x: hidden;
     background:
       linear-gradient(160deg, rgba(9, 22, 27, 0.99), rgba(17, 24, 39, 0.98)),
@@ -1818,7 +1818,7 @@ body:has(.scorecard-layout) {
   }
 
   .scorecard-topbar {
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   .score-summary,
