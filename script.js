@@ -85,6 +85,7 @@ const matchResultNewMatch = document.querySelector("#matchResultNewMatch");
 const matchResultScorecard = document.querySelector("#matchResultScorecard");
 const matchResultShare = document.querySelector("#matchResultShare");
 const matchResultDownload = document.querySelector("#matchResultDownload");
+const matchResultCancel = document.querySelector("#matchResultCancel");
 const openScorecardDetails = document.querySelector("#openScorecardDetails");
 const scorecardDetailsModal = document.querySelector("#scorecardDetailsModal");
 const closeScorecardDetails = document.querySelector("#closeScorecardDetails");
@@ -106,6 +107,7 @@ let firstInnings = null;
 let inningsNumber = 1;
 let matchResultSummary = "";
 let activeScorecardMatch = null;
+let matchResultDismissed = false;
 
 function getActiveScreenName() {
   return document.querySelector(".screen.is-active")?.id || "homeScreen";
@@ -121,6 +123,7 @@ function saveAppState() {
     firstInnings,
     inningsNumber,
     matchResultSummary,
+    matchResultDismissed,
     activeScreen: getActiveScreenName()
   }));
 }
@@ -142,6 +145,7 @@ function resetForNewMatch() {
   firstInnings = null;
   inningsNumber = 1;
   matchResultSummary = "";
+  matchResultDismissed = false;
   createMatchForm.reset();
   inningsForm.reset();
   secondInningsForm.reset();
@@ -289,6 +293,28 @@ function getBallLabel(runs, isWide, isNoBall, isByes, isLegByes, isWicket) {
   return String(runs);
 }
 
+function getOverBallClass(ball) {
+  const label = String(ball).toLowerCase();
+
+  if (label === "free hit") {
+    return "free-hit";
+  }
+
+  if (label.startsWith("wd")) {
+    return "wide";
+  }
+
+  if (label.startsWith("nb")) {
+    return "no-ball";
+  }
+
+  if (label.startsWith("w")) {
+    return "wicket";
+  }
+
+  return "";
+}
+
 function updateScorecard() {
   const striker = getPlayer(scoringState.striker);
   const nonStriker = getPlayer(scoringState.nonStriker);
@@ -327,7 +353,11 @@ function updateScorecard() {
   tableBowlerWickets.textContent = scoringState.bowler.wickets;
   tableBowlerRuns.textContent = scoringState.bowler.runs;
   thisOverBalls.innerHTML = scoringState.thisOver.length
-    ? scoringState.thisOver.map((ball) => `<b>${ball}</b>`).join("")
+    ? scoringState.thisOver.map((ball) => {
+      const ballClass = getOverBallClass(ball);
+      const className = ballClass ? ` class="${ballClass}"` : "";
+      return `<b${className}>${escapeHtml(ball)}</b>`;
+    }).join("")
     : "<b>-</b>";
 
   inningsExtraTotal.textContent = scoringState.extras.total;
@@ -673,6 +703,7 @@ function openNextPrompt() {
 
   activePrompt = promptQueue.shift();
   scoringPromptMessage.textContent = "";
+  scoringPromptMessage.className = "scoring-modal-message";
   scoringPromptInput.value = "";
   retireOptions.hidden = activePrompt.type !== "retire";
   scoringPromptTitle.textContent = activePrompt.type === "bowler"
@@ -695,6 +726,10 @@ function openNextPrompt() {
     : activePrompt.type === "retire"
       ? "Cancel"
       : "End innings";
+  if (activePrompt.type === "bowler") {
+    scoringPromptMessage.textContent = `Total runs: ${scoringState.runs}`;
+    scoringPromptMessage.classList.add("is-info");
+  }
   if (activePrompt.type === "retire") {
     retireStrikeName.textContent = scoringState.striker;
     retireNonStrikeName.textContent = scoringState.nonStriker;
@@ -779,6 +814,7 @@ function showMatchResult() {
 
   matchResultText.textContent = matchResultSummary;
   renderScorecardDetails();
+  matchResultDismissed = false;
   matchResultModal.hidden = false;
   saveCompletedMatchToHistory();
   saveAppState();
@@ -829,6 +865,7 @@ function startScorecard(innings, options = {}) {
   if (inningsNumber === 1) {
     firstInnings = null;
     matchResultSummary = "";
+    matchResultDismissed = false;
   }
   clearExtras();
   scorePickerButtons.forEach((button) => {
@@ -861,6 +898,7 @@ function restoreSavedAppState() {
     firstInnings = saved.firstInnings || null;
     inningsNumber = saved.inningsNumber || 1;
     matchResultSummary = saved.matchResultSummary || "";
+    matchResultDismissed = Boolean(saved.matchResultDismissed);
 
     if (currentMatch) {
       teamOne.value = currentMatch.teamOne || "";
@@ -883,7 +921,7 @@ function restoreSavedAppState() {
         endInnings.textContent = scoringState.runs >= scoringState.target ? "Target reached" : "Match ended";
         matchResultText.textContent = matchResultSummary;
         renderScorecardDetails();
-        matchResultModal.hidden = false;
+        matchResultModal.hidden = matchResultDismissed;
       } else if (saved.activeScreen === "secondInningsScreen" && firstInnings) {
         prepareSecondInningsSetup();
         showScreen(secondInningsScreen);
@@ -961,6 +999,10 @@ function addRuns(runs) {
   }
 
   scoringState.thisOver.push(ballLabel);
+
+  if (isNoBall) {
+    scoringState.thisOver.push("Free Hit");
+  }
 
   if (isBatRuns) {
     player.runs += runs;
@@ -1295,6 +1337,12 @@ matchResultScorecard.addEventListener("click", () => {
 matchResultShare.addEventListener("click", shareScorecardText);
 
 matchResultDownload.addEventListener("click", downloadScorecardPdf);
+
+matchResultCancel.addEventListener("click", () => {
+  matchResultDismissed = true;
+  matchResultModal.hidden = true;
+  saveAppState();
+});
 
 openScorecardDetails.addEventListener("click", () => {
   openScorecardModal();

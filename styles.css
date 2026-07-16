@@ -1226,6 +1226,40 @@ body:has(.scorecard-layout) {
   font-size: 12px;
 }
 
+.this-over-balls b.wide {
+  border-color: rgba(56, 189, 248, 0.72);
+  background: linear-gradient(135deg, #0ea5e9, #075985);
+  color: #ffffff;
+  font-weight: 950;
+  box-shadow: 0 8px 18px rgba(14, 165, 233, 0.24);
+}
+
+.this-over-balls b.no-ball {
+  border-color: rgba(251, 146, 60, 0.72);
+  background: linear-gradient(135deg, #f97316, #7c2d12);
+  color: #ffffff;
+  font-weight: 950;
+  box-shadow: 0 8px 18px rgba(249, 115, 22, 0.24);
+}
+
+.this-over-balls b.wicket {
+  border-color: rgba(248, 113, 113, 0.78);
+  background: linear-gradient(135deg, #ef4444, #7f1d1d);
+  color: #ffffff;
+  font-weight: 950;
+  box-shadow: 0 8px 18px rgba(239, 68, 68, 0.24);
+}
+
+.this-over-balls b.free-hit {
+  min-width: 74px;
+  border-color: rgba(250, 204, 21, 0.78);
+  background: linear-gradient(135deg, #facc15, #b45309);
+  color: #111827;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
 .extras-grid label {
   color: #dbeafe;
 }
@@ -1385,6 +1419,10 @@ body:has(.scorecard-layout) {
   font-size: 12px;
   font-weight: 800;
   text-align: center;
+}
+
+.scoring-modal-message.is-info {
+  color: #d9f99d;
 }
 
 .scoring-modal-actions {
